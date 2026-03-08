@@ -372,18 +372,30 @@ CUSTOM_CSS = """
 }
 
 /* ---- Tabs ---- */
-.tabs > .tab-nav > button {
-    color: #888 !important;
-    background: #141414 !important;
-    border: 1px solid #2a2a2a !important;
-    border-bottom: none !important;
-    font-weight: 500 !important;
-}
-.tabs > .tab-nav > button.selected {
-    color: #76b900 !important;
+button[role="tab"] {
+    color: #aaa !important;
     background: #1a1a1a !important;
+    border: 1px solid #333 !important;
+    border-bottom: 2px solid transparent !important;
+    font-weight: 600 !important;
+    font-size: 0.95em !important;
+    padding: 10px 20px !important;
+    margin-right: 4px !important;
+    border-radius: 6px 6px 0 0 !important;
+}
+button[role="tab"]:hover {
+    color: #ccc !important;
+    background: #222 !important;
+}
+button[role="tab"][aria-selected="true"] {
+    color: #76b900 !important;
+    background: #141414 !important;
     border-color: #76b900 !important;
-    border-bottom: 2px solid #76b900 !important;
+    border-bottom: 3px solid #76b900 !important;
+}
+[role="tablist"] {
+    border-bottom: 1px solid #333 !important;
+    background: transparent !important;
 }
 
 /* ---- Buttons ---- */
