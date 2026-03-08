@@ -297,104 +297,7 @@ def run_single_agent(agent_name: str, query: str) -> str:
 # Gradio UI — NVIDIA-inspired dark theme
 # ---------------------------------------------------------------------------
 CUSTOM_CSS = """
-/* ---- Global Dark Theme ---- */
-.gradio-container {
-    max-width: 1200px !important;
-    background: #0d0d0d !important;
-}
-.dark .gradio-container { background: #0d0d0d !important; }
-
-/* ---- Header Banner ---- */
-.nv-header {
-    background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 40%, #1c2b10 100%);
-    border: 1px solid #2a2a2a;
-    border-left: 4px solid #76b900;
-    padding: 28px 32px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-}
-.nv-header h1 {
-    color: #76b900;
-    margin: 0;
-    font-size: 1.9em;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-}
-.nv-header .nv-sub {
-    color: #a0a0a0;
-    margin: 6px 0 0 0;
-    font-size: 1em;
-    font-weight: 400;
-}
-.nv-header .nv-meta {
-    color: #666;
-    font-size: 0.82em;
-    margin-top: 8px;
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-}
-.nv-header .nv-badge {
-    background: #1a2610;
-    color: #76b900;
-    padding: 2px 10px;
-    border-radius: 4px;
-    font-size: 0.78em;
-    font-weight: 600;
-    border: 1px solid #2d3f1a;
-}
-
-/* ---- Inputs focus ---- */
-textarea:focus {
-    border-color: #76b900 !important;
-    box-shadow: 0 0 0 1px #76b900 !important;
-}
-
-/* ---- Status bar ---- */
-.nv-status {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 14px;
-    background: #141414;
-    border: 1px solid #2a2a2a;
-    border-radius: 6px;
-    margin-bottom: 12px;
-    font-size: 0.82em;
-    color: #888;
-}
-.nv-dot {
-    width: 8px; height: 8px;
-    background: #76b900;
-    border-radius: 50%;
-    display: inline-block;
-    box-shadow: 0 0 6px #76b900;
-}
-
-/* ---- Footer ---- */
-.nv-footer {
-    text-align: center;
-    padding: 16px;
-    color: #444;
-    font-size: 0.78em;
-    border-top: 1px solid #1a1a1a;
-    margin-top: 20px;
-}
-.nv-footer a { color: #76b900; text-decoration: none; }
-"""
-
-HEADER_HTML = """
-<div class="nv-header">
-    <h1>SAP Multi-Agent Orchestrator</h1>
-    <p class="nv-sub">Autonomous AI Agents for SAP — Powered by NVIDIA NIM</p>
-    <div class="nv-meta">
-        <span class="nv-badge">NVIDIA NIM</span>
-        <span class="nv-badge">LLaMA 3.1 70B</span>
-        <span class="nv-badge">Multi-Agent</span>
-        <span class="nv-badge">RAG</span>
-        <span>by amitlal</span>
-    </div>
-</div>
+.gradio-container { max-width: 1200px !important; }
 """
 
 AGENT_DESCRIPTIONS = {
@@ -403,22 +306,11 @@ AGENT_DESCRIPTIONS = {
     "SQL_AGENT": "Natural language to ABAP SQL & CDS views. Annotations, JOINs, performance optimization.",
 }
 
-STATUS_HTML = """
-<div class="nv-status">
-    <span class="nv-dot"></span>
-    <span>NIM Inference Endpoint Active</span>
-    <span style="margin-left: auto; color: #555;">Model: meta/llama-3.1-70b-instruct</span>
-</div>
-"""
-
-FOOTER_HTML = """
-<div class="nv-footer">
-    SAP Multi-Agent Orchestrator &middot; Built with
-    <a href="https://build.nvidia.com" target="_blank">NVIDIA NIM</a> &amp;
-    <a href="https://gradio.app" target="_blank">Gradio</a> &middot;
-    <a href="https://huggingface.co/amitlal" target="_blank">amitlal</a>
-</div>
-"""
+NV_GREEN = gr.themes.Color(
+    c50="#f4fce3", c100="#e6f7b3", c200="#ccef66", c300="#b3e619",
+    c400="#99d900", c500="#76b900", c600="#5e9400", c700="#476f00",
+    c800="#2f4a00", c900="#182500", c950="#0c1200",
+)
 
 EXAMPLE_QUERIES = [
     "Generate an ABAP class that reads purchase orders from EKKO/EKPO and calculates total spend per vendor",
@@ -455,42 +347,10 @@ AGENT_EXAMPLES = {
 with gr.Blocks(
     title="SAP Multi-Agent Orchestrator | NVIDIA NIM",
     css=CUSTOM_CSS,
-    theme=gr.themes.Base(
-        primary_hue=gr.themes.Color(
-            c50="#f4fce3", c100="#e6f7b3", c200="#ccef66", c300="#b3e619",
-            c400="#99d900", c500="#76b900", c600="#5e9400", c700="#476f00",
-            c800="#2f4a00", c900="#182500", c950="#0c1200",
-        ),
-        neutral_hue=gr.themes.Color(
-            c50="#f5f5f5", c100="#e0e0e0", c200="#b0b0b0", c300="#888888",
-            c400="#666666", c500="#444444", c600="#333333", c700="#2a2a2a",
-            c800="#1a1a1a", c900="#141414", c950="#0d0d0d",
-        ),
-        font=["Inter", "system-ui", "sans-serif"],
-    ).set(
-        body_background_fill="#0d0d0d",
-        body_background_fill_dark="#0d0d0d",
-        block_background_fill="#141414",
-        block_background_fill_dark="#141414",
-        block_border_color="#2a2a2a",
-        block_border_color_dark="#2a2a2a",
-        block_label_text_color="#888",
-        block_title_text_color="#ccc",
-        input_background_fill="#1a1a1a",
-        input_background_fill_dark="#1a1a1a",
-        input_border_color="#333",
-        input_border_color_dark="#333",
-        button_primary_background_fill="#76b900",
-        button_primary_background_fill_dark="#76b900",
-        button_primary_text_color="#000",
-        button_primary_text_color_dark="#000",
-        button_secondary_background_fill="#1a1a1a",
-        button_secondary_text_color="#999",
-    ),
+    theme=gr.themes.Soft(primary_hue=NV_GREEN),
 ) as demo:
 
-    gr.HTML(HEADER_HTML)
-    gr.HTML(STATUS_HTML)
+    gr.Markdown("# SAP Multi-Agent Orchestrator\n*Autonomous AI Agents for SAP — Powered by NVIDIA NIM*")
 
     with gr.Tabs(selected="orchestrator"):
         # ---- Tab 1: Orchestrator (Auto-Route) ----
@@ -698,7 +558,10 @@ with gr.Blocks(
 5. **Add memory** — Store conversation context for multi-turn agent interactions
 """)
 
-    gr.HTML(FOOTER_HTML)
+    gr.Markdown(
+        "*Built with [NVIDIA NIM](https://build.nvidia.com) & "
+        "[Gradio](https://gradio.app) by [amitlal](https://huggingface.co/amitlal)*"
+    )
 
 # ---------------------------------------------------------------------------
 # Launch
