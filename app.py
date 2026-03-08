@@ -477,4 +477,4 @@ with gr.Blocks(title="SAP Multi-Agent Orchestrator", css=CUSTOM_CSS) as demo:
 # Launch
 # ---------------------------------------------------------------------------
 if __name__ == "__main__":
-    demo.launch()
+    demo.launch(ssr_mode=False)
