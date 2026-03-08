@@ -294,29 +294,211 @@ def run_single_agent(agent_name: str, query: str) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Gradio UI
+# Gradio UI — NVIDIA-inspired dark theme
 # ---------------------------------------------------------------------------
 CUSTOM_CSS = """
+/* ---- Global Dark Theme ---- */
 .gradio-container {
     max-width: 1200px !important;
+    background: #0d0d0d !important;
 }
-.agent-header {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-    padding: 20px;
-    border-radius: 12px;
-    margin-bottom: 16px;
-    color: white;
+.dark .gradio-container { background: #0d0d0d !important; }
+
+/* ---- Header Banner ---- */
+.nv-header {
+    background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 40%, #1c2b10 100%);
+    border: 1px solid #2a2a2a;
+    border-left: 4px solid #76b900;
+    padding: 28px 32px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+.nv-header h1 {
+    color: #76b900;
+    margin: 0;
+    font-size: 1.9em;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+.nv-header .nv-sub {
+    color: #a0a0a0;
+    margin: 6px 0 0 0;
+    font-size: 1em;
+    font-weight: 400;
+}
+.nv-header .nv-meta {
+    color: #666;
+    font-size: 0.82em;
+    margin-top: 8px;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.nv-header .nv-badge {
+    background: #1a2610;
+    color: #76b900;
+    padding: 2px 10px;
+    border-radius: 4px;
+    font-size: 0.78em;
+    font-weight: 600;
+    border: 1px solid #2d3f1a;
+}
+
+/* ---- Agent Cards ---- */
+.nv-agents-row {
+    display: flex;
+    gap: 12px;
+    margin: 12px 0 20px 0;
+}
+.nv-agent-card {
+    flex: 1;
+    background: #141414;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    padding: 16px;
+    transition: border-color 0.2s;
+}
+.nv-agent-card:hover { border-color: #76b900; }
+.nv-agent-card h3 {
+    color: #76b900;
+    margin: 0 0 6px 0;
+    font-size: 0.95em;
+}
+.nv-agent-card p {
+    color: #888;
+    margin: 0;
+    font-size: 0.82em;
+    line-height: 1.4;
+}
+
+/* ---- Tabs ---- */
+.tabs > .tab-nav > button {
+    color: #888 !important;
+    background: #141414 !important;
+    border: 1px solid #2a2a2a !important;
+    border-bottom: none !important;
+    font-weight: 500 !important;
+}
+.tabs > .tab-nav > button.selected {
+    color: #76b900 !important;
+    background: #1a1a1a !important;
+    border-color: #76b900 !important;
+    border-bottom: 2px solid #76b900 !important;
+}
+
+/* ---- Buttons ---- */
+.primary.svelte-cmf5ev, button.primary {
+    background: #76b900 !important;
+    color: #000 !important;
+    border: none !important;
+    font-weight: 700 !important;
+    border-radius: 6px !important;
+}
+.primary.svelte-cmf5ev:hover, button.primary:hover {
+    background: #8dd100 !important;
+}
+.secondary.svelte-cmf5ev, button.secondary {
+    background: #1a1a1a !important;
+    color: #999 !important;
+    border: 1px solid #333 !important;
+    border-radius: 6px !important;
+}
+
+/* ---- Inputs ---- */
+textarea, .wrap.svelte-cmf5ev {
+    background: #141414 !important;
+    border: 1px solid #333 !important;
+    color: #e0e0e0 !important;
+    border-radius: 6px !important;
+}
+textarea:focus {
+    border-color: #76b900 !important;
+    box-shadow: 0 0 0 1px #76b900 !important;
+}
+
+/* ---- Chatbot ---- */
+.chatbot .message {
+    border-radius: 8px !important;
+}
+
+/* ---- Status bar ---- */
+.nv-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: #141414;
+    border: 1px solid #2a2a2a;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    font-size: 0.82em;
+    color: #888;
+}
+.nv-dot {
+    width: 8px; height: 8px;
+    background: #76b900;
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 6px #76b900;
+}
+
+/* ---- Footer ---- */
+.nv-footer {
     text-align: center;
+    padding: 16px;
+    color: #444;
+    font-size: 0.78em;
+    border-top: 1px solid #1a1a1a;
+    margin-top: 20px;
 }
-.agent-header h1 { color: #76b900; margin: 0; font-size: 1.8em; }
-.agent-header p { color: #ccc; margin: 4px 0 0 0; }
+.nv-footer a { color: #76b900; text-decoration: none; }
 """
 
 HEADER_HTML = """
-<div class="agent-header">
-    <h1>🤖 SAP Multi-Agent Orchestrator</h1>
-    <p>Autonomous Agents × SAP × NVIDIA NIM</p>
-    <p style="font-size: 0.85em; color: #999;">by amitlal • Code Gen • RAG • SQL Translation • Smart Routing</p>
+<div class="nv-header">
+    <h1>SAP Multi-Agent Orchestrator</h1>
+    <p class="nv-sub">Autonomous AI Agents for SAP — Powered by NVIDIA NIM</p>
+    <div class="nv-meta">
+        <span class="nv-badge">NVIDIA NIM</span>
+        <span class="nv-badge">LLaMA 3.1 70B</span>
+        <span class="nv-badge">Multi-Agent</span>
+        <span class="nv-badge">RAG</span>
+        <span>by amitlal</span>
+    </div>
+</div>
+"""
+
+AGENTS_HTML = """
+<div class="nv-agents-row">
+    <div class="nv-agent-card">
+        <h3>ABAP Code Agent</h3>
+        <p>Generate, refactor & explain modern ABAP 7.4+ code. RAP, CDS, clean ABAP, S/4HANA migration.</p>
+    </div>
+    <div class="nv-agent-card">
+        <h3>SAP RAG Agent</h3>
+        <p>Deep SAP knowledge with retrieval. Tables, modules, BAPIs, transactions, BTP services.</p>
+    </div>
+    <div class="nv-agent-card">
+        <h3>SQL Agent</h3>
+        <p>Natural language to ABAP SQL & CDS views. Annotations, JOINs, performance optimization.</p>
+    </div>
+</div>
+"""
+
+STATUS_HTML = """
+<div class="nv-status">
+    <span class="nv-dot"></span>
+    <span>NIM Inference Endpoint Active</span>
+    <span style="margin-left: auto; color: #555;">Model: meta/llama-3.1-70b-instruct</span>
+</div>
+"""
+
+FOOTER_HTML = """
+<div class="nv-footer">
+    SAP Multi-Agent Orchestrator &middot; Built with
+    <a href="https://build.nvidia.com" target="_blank">NVIDIA NIM</a> &amp;
+    <a href="https://gradio.app" target="_blank">Gradio</a> &middot;
+    <a href="https://huggingface.co/amitlal" target="_blank">amitlal</a>
 </div>
 """
 
@@ -329,25 +511,103 @@ EXAMPLE_QUERIES = [
     "Create a CDS view with UI annotations for a Fiori Elements list report on vendor invoices",
 ]
 
-with gr.Blocks(title="SAP Multi-Agent Orchestrator", css=CUSTOM_CSS) as demo:
+AGENT_EXAMPLES = {
+    "ABAP_CODE": [
+        "Generate a managed RAP business object for Sales Orders with draft support",
+        "Write an ABAP class to call a REST API using cl_http_client and parse JSON response",
+        "Refactor this SELECT...ENDSELECT loop into modern ABAP with inline declarations",
+        "Create a unit test class using ABAP Unit for a purchase order validator",
+    ],
+    "SAP_RAG": [
+        "What are the key differences between ECC and S/4HANA in the Finance module?",
+        "Explain the RAP (RESTful ABAP Programming) architecture and when to use managed vs unmanaged",
+        "How does SAP BTP Integration Suite connect to on-premise systems via Cloud Connector?",
+        "What tables and BAPIs are used in the Procure-to-Pay process?",
+    ],
+    "SQL_AGENT": [
+        "Show all open purchase orders over $10K with vendor name and material description",
+        "Create a CDS view joining VBAK/VBAP with KNA1 for a sales order report with UI annotations",
+        "Write ABAP SQL to find the top 10 vendors by total invoice amount this fiscal year",
+        "Build a CDS analytical query for monthly revenue by sales organization and division",
+    ],
+}
+
+
+def get_agent_examples_html(agent_name):
+    """Return formatted HTML with sample prompts for the selected agent."""
+    examples = AGENT_EXAMPLES.get(agent_name, AGENT_EXAMPLES["ABAP_CODE"])
+    items = "".join(
+        f'<div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:6px;'
+        f'padding:10px 14px;margin:6px 0;color:#ccc;font-size:0.88em;cursor:default;">'
+        f'{ex}</div>'
+        for ex in examples
+    )
+    return f'<div style="margin-top:8px;">{items}</div>'
+
+
+with gr.Blocks(
+    title="SAP Multi-Agent Orchestrator | NVIDIA NIM",
+    css=CUSTOM_CSS,
+    theme=gr.themes.Base(
+        primary_hue=gr.themes.Color(
+            c50="#f4fce3", c100="#e6f7b3", c200="#ccef66", c300="#b3e619",
+            c400="#99d900", c500="#76b900", c600="#5e9400", c700="#476f00",
+            c800="#2f4a00", c900="#182500", c950="#0c1200",
+        ),
+        neutral_hue=gr.themes.Color(
+            c50="#f5f5f5", c100="#e0e0e0", c200="#b0b0b0", c300="#888888",
+            c400="#666666", c500="#444444", c600="#333333", c700="#2a2a2a",
+            c800="#1a1a1a", c900="#141414", c950="#0d0d0d",
+        ),
+        font=["Inter", "system-ui", "sans-serif"],
+    ).set(
+        body_background_fill="#0d0d0d",
+        body_background_fill_dark="#0d0d0d",
+        block_background_fill="#141414",
+        block_background_fill_dark="#141414",
+        block_border_color="#2a2a2a",
+        block_border_color_dark="#2a2a2a",
+        block_label_text_color="#888",
+        block_title_text_color="#ccc",
+        input_background_fill="#1a1a1a",
+        input_background_fill_dark="#1a1a1a",
+        input_border_color="#333",
+        input_border_color_dark="#333",
+        button_primary_background_fill="#76b900",
+        button_primary_background_fill_dark="#76b900",
+        button_primary_text_color="#000",
+        button_primary_text_color_dark="#000",
+        button_secondary_background_fill="#1a1a1a",
+        button_secondary_text_color="#999",
+    ),
+) as demo:
 
     gr.HTML(HEADER_HTML)
+    gr.HTML(AGENTS_HTML)
 
     with gr.Tabs():
         # ---- Tab 1: Orchestrator (Auto-Route) ----
-        with gr.TabItem("🧠 Orchestrator (Auto-Route)"):
-            gr.Markdown("The orchestrator analyzes your query and routes it to the best agent(s) automatically.")
-            chatbot = gr.Chatbot(height=500, type="messages")
+        with gr.TabItem("Orchestrator (Auto-Route)"):
+            gr.HTML(STATUS_HTML)
+            gr.Markdown(
+                "The orchestrator analyzes your query and intelligently routes it to the best agent(s).",
+            )
+            chatbot = gr.Chatbot(height=480, type="messages")
             msg = gr.Textbox(
                 placeholder="Ask anything about SAP — code, data, architecture, config...",
                 label="Your Query",
-                lines=3,
+                lines=2,
+                scale=4,
             )
             with gr.Row():
-                send_btn = gr.Button("🚀 Send", variant="primary")
-                clear_btn = gr.Button("🗑️ Clear")
+                send_btn = gr.Button("Send", variant="primary", scale=2)
+                clear_btn = gr.Button("Clear", variant="secondary", scale=1)
 
-            gr.Examples(examples=EXAMPLE_QUERIES, inputs=msg, label="Try these →")
+            gr.Examples(
+                examples=EXAMPLE_QUERIES,
+                inputs=msg,
+                label="Try these",
+            )
 
             def respond(message, history):
                 response = orchestrate(message, history)
@@ -360,22 +620,30 @@ with gr.Blocks(title="SAP Multi-Agent Orchestrator", css=CUSTOM_CSS) as demo:
             clear_btn.click(lambda: ([], ""), None, [chatbot, msg])
 
         # ---- Tab 2: Direct Agent Access ----
-        with gr.TabItem("🎯 Direct Agent Access"):
-            gr.Markdown("Bypass the orchestrator — talk directly to a specific agent.")
+        with gr.TabItem("Direct Agent Access"):
+            gr.Markdown("Bypass the orchestrator — talk directly to a specialist agent.")
 
-            with gr.Row():
-                agent_selector = gr.Radio(
-                    choices=["ABAP_CODE", "SAP_RAG", "SQL_AGENT"],
-                    value="ABAP_CODE",
-                    label="Select Agent",
-                )
+            agent_selector = gr.Radio(
+                choices=["ABAP_CODE", "SAP_RAG", "SQL_AGENT"],
+                value="ABAP_CODE",
+                label="Select Agent",
+            )
             direct_input = gr.Textbox(
                 placeholder="Enter your query for the selected agent...",
                 label="Query",
                 lines=3,
             )
-            direct_btn = gr.Button("⚡ Run Agent", variant="primary")
+            direct_btn = gr.Button("Run Agent", variant="primary")
             direct_output = gr.Markdown(label="Agent Response")
+
+            gr.Markdown("**Sample prompts** — copy one into the query box above:")
+            examples_html = gr.HTML(value=get_agent_examples_html("ABAP_CODE"))
+
+            agent_selector.change(
+                get_agent_examples_html,
+                inputs=[agent_selector],
+                outputs=[examples_html],
+            )
 
             direct_btn.click(
                 run_single_agent,
@@ -384,10 +652,10 @@ with gr.Blocks(title="SAP Multi-Agent Orchestrator", css=CUSTOM_CSS) as demo:
             )
 
         # ---- Tab 3: SAP Knowledge Explorer ----
-        with gr.TabItem("📚 SAP Knowledge Base"):
+        with gr.TabItem("SAP Knowledge Base"):
             gr.Markdown("Browse the built-in SAP knowledge that powers the RAG agent.")
 
-            with gr.Accordion("📊 SAP Tables", open=True):
+            with gr.Accordion("SAP Tables", open=True):
                 table_data = [[k, v] for k, v in SAP_KNOWLEDGE["tables"].items()]
                 gr.Dataframe(
                     value=table_data,
@@ -395,7 +663,7 @@ with gr.Blocks(title="SAP Multi-Agent Orchestrator", css=CUSTOM_CSS) as demo:
                     interactive=False,
                 )
 
-            with gr.Accordion("📦 SAP Modules", open=False):
+            with gr.Accordion("SAP Modules", open=False):
                 module_data = [[k, v] for k, v in SAP_KNOWLEDGE["modules"].items()]
                 gr.Dataframe(
                     value=module_data,
@@ -403,7 +671,7 @@ with gr.Blocks(title="SAP Multi-Agent Orchestrator", css=CUSTOM_CSS) as demo:
                     interactive=False,
                 )
 
-            with gr.Accordion("🏗️ RAP Patterns", open=False):
+            with gr.Accordion("RAP Patterns", open=False):
                 rap_data = [[k, v] for k, v in SAP_KNOWLEDGE["rap_patterns"].items()]
                 gr.Dataframe(
                     value=rap_data,
@@ -411,7 +679,7 @@ with gr.Blocks(title="SAP Multi-Agent Orchestrator", css=CUSTOM_CSS) as demo:
                     interactive=False,
                 )
 
-            with gr.Accordion("🏷️ CDS Annotations", open=False):
+            with gr.Accordion("CDS Annotations", open=False):
                 cds_data = [[k, v] for k, v in SAP_KNOWLEDGE["cds_annotations"].items()]
                 gr.Dataframe(
                     value=cds_data,
@@ -420,9 +688,9 @@ with gr.Blocks(title="SAP Multi-Agent Orchestrator", css=CUSTOM_CSS) as demo:
                 )
 
         # ---- Tab 4: Architecture ----
-        with gr.TabItem("🏛️ Architecture"):
+        with gr.TabItem("Architecture"):
             gr.Markdown("""
-## How It Works
+### System Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -431,30 +699,30 @@ with gr.Blocks(title="SAP Multi-Agent Orchestrator", css=CUSTOM_CSS) as demo:
                        │
                        ▼
 ┌─────────────────────────────────────────────────────────┐
-│              🧠 Orchestrator Agent                       │
-│         (Classifies & routes queries)                    │
-│         Powered by NVIDIA NIM LLM                        │
+│              Orchestrator Agent                          │
+│         Classifies & routes queries                      │
+│         Powered by NVIDIA NIM                            │
 └───────┬──────────────┬──────────────┬───────────────────┘
         │              │              │
         ▼              ▼              ▼
 ┌──────────────┐ ┌──────────────┐ ┌──────────────┐
-│ 💻 ABAP Code │ │ 📚 SAP RAG   │ │ 🔍 SQL Agent │
+│  ABAP Code   │ │   SAP RAG    │ │  SQL Agent   │
 │    Agent     │ │    Agent     │ │              │
 │              │ │              │ │              │
-│ • Generate   │ │ • Table KB   │ │ • NL → ABAP  │
-│ • Refactor   │ │ • Module KB  │ │   SQL        │
-│ • Explain    │ │ • RAP KB     │ │ • NL → CDS   │
-│ • Migrate    │ │ • CDS KB     │ │   views      │
+│  Generate    │ │  Table KB    │ │  NL → ABAP   │
+│  Refactor    │ │  Module KB   │ │    SQL       │
+│  Explain     │ │  RAP KB      │ │  NL → CDS    │
+│  Migrate     │ │  CDS KB      │ │    views     │
 └──────────────┘ └──────────────┘ └──────────────┘
         │              │              │
         ▼              ▼              ▼
 ┌─────────────────────────────────────────────────────────┐
 │              NVIDIA NIM Inference API                     │
-│           (LLaMA 3.1 70B / Mixtral / etc.)              │
+│           LLaMA 3.1 70B Instruct                         │
 └─────────────────────────────────────────────────────────┘
 ```
 
-### Key Design Decisions
+### Design Decisions
 
 | Decision | Choice | Why |
 |----------|--------|-----|
@@ -464,14 +732,16 @@ with gr.Blocks(title="SAP Multi-Agent Orchestrator", css=CUSTOM_CSS) as demo:
 | UI | Gradio | Native HF Spaces support, chat + direct modes |
 | Routing | LLM-based + keyword fallback | Smart routing with reliable fallback |
 
-### Extending the Agents
+### Extending the System
 
-1. **Add more knowledge**: Expand `SAP_KNOWLEDGE` dict with tables, BAPIs, transactions
-2. **Add new agents**: Create new `AgentType` + system prompt + route in orchestrator
-3. **Add vector RAG**: Replace keyword search with NVIDIA NeMo Retriever embeddings
-4. **Add ABAP execution**: Connect to SAP via ADT API for live code validation
-5. **Add memory**: Store conversation context for multi-turn agent interactions
+1. **Add more knowledge** — Expand `SAP_KNOWLEDGE` dict with tables, BAPIs, transactions
+2. **Add new agents** — Create new `AgentType` + system prompt + route in orchestrator
+3. **Add vector RAG** — Replace keyword search with NVIDIA NeMo Retriever embeddings
+4. **Add ABAP execution** — Connect to SAP via ADT API for live code validation
+5. **Add memory** — Store conversation context for multi-turn agent interactions
 """)
+
+    gr.HTML(FOOTER_HTML)
 
 # ---------------------------------------------------------------------------
 # Launch
