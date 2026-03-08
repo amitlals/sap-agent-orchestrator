@@ -8,7 +8,7 @@ sdk_version: 4.44.0
 app_file: app.py
 pinned: true
 license: mit
-short_description: Autonomous SAP Agents powered by NVIDIA NIM — Code Gen, RAG, SQL Translation
+short_description: SAP Agents powered by NVIDIA NIM
 tags:
   - sap
   - nvidia
