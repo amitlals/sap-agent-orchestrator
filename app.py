@@ -344,33 +344,6 @@ CUSTOM_CSS = """
     border: 1px solid #2d3f1a;
 }
 
-/* ---- Agent Cards ---- */
-.nv-agents-row {
-    display: flex;
-    gap: 12px;
-    margin: 12px 0 20px 0;
-}
-.nv-agent-card {
-    flex: 1;
-    background: #141414;
-    border: 1px solid #2a2a2a;
-    border-radius: 8px;
-    padding: 16px;
-    transition: border-color 0.2s;
-}
-.nv-agent-card:hover { border-color: #76b900; }
-.nv-agent-card h3 {
-    color: #76b900;
-    margin: 0 0 6px 0;
-    font-size: 0.95em;
-}
-.nv-agent-card p {
-    color: #888;
-    margin: 0;
-    font-size: 0.82em;
-    line-height: 1.4;
-}
-
 /* ---- Inputs focus ---- */
 textarea:focus {
     border-color: #76b900 !important;
@@ -424,22 +397,11 @@ HEADER_HTML = """
 </div>
 """
 
-AGENTS_HTML = """
-<div class="nv-agents-row">
-    <div class="nv-agent-card">
-        <h3>ABAP Code Agent</h3>
-        <p>Generate, refactor & explain modern ABAP 7.4+ code. RAP, CDS, clean ABAP, S/4HANA migration.</p>
-    </div>
-    <div class="nv-agent-card">
-        <h3>SAP RAG Agent</h3>
-        <p>Deep SAP knowledge with retrieval. Tables, modules, BAPIs, transactions, BTP services.</p>
-    </div>
-    <div class="nv-agent-card">
-        <h3>SQL Agent</h3>
-        <p>Natural language to ABAP SQL & CDS views. Annotations, JOINs, performance optimization.</p>
-    </div>
-</div>
-"""
+AGENT_DESCRIPTIONS = {
+    "ABAP_CODE": "Generate, refactor & explain modern ABAP 7.4+ code. RAP, CDS, clean ABAP, S/4HANA migration.",
+    "SAP_RAG": "Deep SAP knowledge with retrieval. Tables, modules, BAPIs, transactions, BTP services.",
+    "SQL_AGENT": "Natural language to ABAP SQL & CDS views. Annotations, JOINs, performance optimization.",
+}
 
 STATUS_HTML = """
 <div class="nv-status">
@@ -489,17 +451,6 @@ AGENT_EXAMPLES = {
 }
 
 
-def get_agent_examples_html(agent_name):
-    """Return formatted HTML with sample prompts for the selected agent."""
-    examples = AGENT_EXAMPLES.get(agent_name, AGENT_EXAMPLES["ABAP_CODE"])
-    items = "".join(
-        f'<div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:6px;'
-        f'padding:10px 14px;margin:6px 0;color:#ccc;font-size:0.88em;cursor:default;">'
-        f'{ex}</div>'
-        for ex in examples
-    )
-    return f'<div style="margin-top:8px;">{items}</div>'
-
 
 with gr.Blocks(
     title="SAP Multi-Agent Orchestrator | NVIDIA NIM",
@@ -539,12 +490,11 @@ with gr.Blocks(
 ) as demo:
 
     gr.HTML(HEADER_HTML)
-    gr.HTML(AGENTS_HTML)
+    gr.HTML(STATUS_HTML)
 
     with gr.Tabs(selected="orchestrator"):
         # ---- Tab 1: Orchestrator (Auto-Route) ----
         with gr.TabItem("Orchestrator (Auto-Route)", id="orchestrator"):
-            gr.HTML(STATUS_HTML)
             gr.Markdown(
                 "The orchestrator analyzes your query and intelligently routes it to the best agent(s).",
             )
@@ -553,7 +503,6 @@ with gr.Blocks(
                 placeholder="Ask anything about SAP — code, data, architecture, config...",
                 label="Your Query",
                 lines=2,
-                scale=4,
             )
             with gr.Row():
                 send_btn = gr.Button("Send", variant="primary", scale=2)
@@ -575,40 +524,92 @@ with gr.Blocks(
             send_btn.click(respond, [msg, chatbot], [msg, chatbot])
             clear_btn.click(lambda: ([], ""), None, [chatbot, msg])
 
-        # ---- Tab 2: Direct Agent Access ----
-        with gr.TabItem("Direct Agent Access", id="direct"):
-            gr.Markdown("Bypass the orchestrator — talk directly to a specialist agent.")
-
-            agent_selector = gr.Radio(
-                choices=["ABAP_CODE", "SAP_RAG", "SQL_AGENT"],
-                value="ABAP_CODE",
-                label="Select Agent",
-            )
-            direct_input = gr.Textbox(
-                placeholder="Enter your query for the selected agent...",
-                label="Query",
+        # ---- Tab 2: ABAP Code Agent ----
+        with gr.TabItem("ABAP Code Agent", id="abap"):
+            gr.Markdown(f"**{AGENT_DESCRIPTIONS['ABAP_CODE']}**")
+            abap_input = gr.Textbox(
+                placeholder="Describe the ABAP code you need...",
+                label="Your Query",
                 lines=3,
             )
-            direct_btn = gr.Button("Run Agent", variant="primary")
-            direct_output = gr.Markdown(label="Agent Response")
+            abap_btn = gr.Button("Generate", variant="primary")
+            abap_output = gr.Markdown(label="Response")
 
-            gr.Markdown("**Sample prompts** — copy one into the query box above:")
-            examples_html = gr.HTML(value=get_agent_examples_html("ABAP_CODE"))
-
-            agent_selector.change(
-                get_agent_examples_html,
-                inputs=[agent_selector],
-                outputs=[examples_html],
+            gr.Examples(
+                examples=AGENT_EXAMPLES["ABAP_CODE"],
+                inputs=abap_input,
+                label="Sample prompts",
             )
 
-            direct_btn.click(
-                run_single_agent,
-                inputs=[agent_selector, direct_input],
-                outputs=direct_output,
+            abap_btn.click(
+                lambda q: run_single_agent("ABAP_CODE", q),
+                inputs=[abap_input],
+                outputs=abap_output,
+            )
+            abap_input.submit(
+                lambda q: run_single_agent("ABAP_CODE", q),
+                inputs=[abap_input],
+                outputs=abap_output,
             )
 
-        # ---- Tab 3: SAP Knowledge Explorer ----
-        with gr.TabItem("SAP Knowledge Base", id="knowledge"):
+        # ---- Tab 3: SAP RAG Agent ----
+        with gr.TabItem("SAP RAG Agent", id="rag"):
+            gr.Markdown(f"**{AGENT_DESCRIPTIONS['SAP_RAG']}**")
+            rag_input = gr.Textbox(
+                placeholder="Ask any SAP technical question...",
+                label="Your Query",
+                lines=3,
+            )
+            rag_btn = gr.Button("Ask", variant="primary")
+            rag_output = gr.Markdown(label="Response")
+
+            gr.Examples(
+                examples=AGENT_EXAMPLES["SAP_RAG"],
+                inputs=rag_input,
+                label="Sample prompts",
+            )
+
+            rag_btn.click(
+                lambda q: run_single_agent("SAP_RAG", q),
+                inputs=[rag_input],
+                outputs=rag_output,
+            )
+            rag_input.submit(
+                lambda q: run_single_agent("SAP_RAG", q),
+                inputs=[rag_input],
+                outputs=rag_output,
+            )
+
+        # ---- Tab 4: SQL Agent ----
+        with gr.TabItem("SQL Agent", id="sql"):
+            gr.Markdown(f"**{AGENT_DESCRIPTIONS['SQL_AGENT']}**")
+            sql_input = gr.Textbox(
+                placeholder="Describe the data you want to query...",
+                label="Your Query",
+                lines=3,
+            )
+            sql_btn = gr.Button("Translate", variant="primary")
+            sql_output = gr.Markdown(label="Response")
+
+            gr.Examples(
+                examples=AGENT_EXAMPLES["SQL_AGENT"],
+                inputs=sql_input,
+                label="Sample prompts",
+            )
+
+            sql_btn.click(
+                lambda q: run_single_agent("SQL_AGENT", q),
+                inputs=[sql_input],
+                outputs=sql_output,
+            )
+            sql_input.submit(
+                lambda q: run_single_agent("SQL_AGENT", q),
+                inputs=[sql_input],
+                outputs=sql_output,
+            )
+
+        # ---- Tab 5: SAP Knowledge Base ----
+        with gr.TabItem("Knowledge Base", id="knowledge"):
             gr.Markdown("Browse the built-in SAP knowledge that powers the RAG agent.")
 
             with gr.Accordion("SAP Tables", open=True):
@@ -643,7 +644,7 @@ with gr.Blocks(
                     interactive=False,
                 )
 
-        # ---- Tab 4: Architecture ----
+        # ---- Tab 6: Architecture ----
         with gr.TabItem("Architecture", id="architecture"):
             gr.Markdown("""
 ### System Architecture
