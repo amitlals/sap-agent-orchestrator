@@ -371,66 +371,10 @@ CUSTOM_CSS = """
     line-height: 1.4;
 }
 
-/* ---- Tabs ---- */
-button[role="tab"] {
-    color: #aaa !important;
-    background: #1a1a1a !important;
-    border: 1px solid #333 !important;
-    border-bottom: 2px solid transparent !important;
-    font-weight: 600 !important;
-    font-size: 0.95em !important;
-    padding: 10px 20px !important;
-    margin-right: 4px !important;
-    border-radius: 6px 6px 0 0 !important;
-}
-button[role="tab"]:hover {
-    color: #ccc !important;
-    background: #222 !important;
-}
-button[role="tab"][aria-selected="true"] {
-    color: #76b900 !important;
-    background: #141414 !important;
-    border-color: #76b900 !important;
-    border-bottom: 3px solid #76b900 !important;
-}
-[role="tablist"] {
-    border-bottom: 1px solid #333 !important;
-    background: transparent !important;
-}
-
-/* ---- Buttons ---- */
-.primary.svelte-cmf5ev, button.primary {
-    background: #76b900 !important;
-    color: #000 !important;
-    border: none !important;
-    font-weight: 700 !important;
-    border-radius: 6px !important;
-}
-.primary.svelte-cmf5ev:hover, button.primary:hover {
-    background: #8dd100 !important;
-}
-.secondary.svelte-cmf5ev, button.secondary {
-    background: #1a1a1a !important;
-    color: #999 !important;
-    border: 1px solid #333 !important;
-    border-radius: 6px !important;
-}
-
-/* ---- Inputs ---- */
-textarea, .wrap.svelte-cmf5ev {
-    background: #141414 !important;
-    border: 1px solid #333 !important;
-    color: #e0e0e0 !important;
-    border-radius: 6px !important;
-}
+/* ---- Inputs focus ---- */
 textarea:focus {
     border-color: #76b900 !important;
     box-shadow: 0 0 0 1px #76b900 !important;
-}
-
-/* ---- Chatbot ---- */
-.chatbot .message {
-    border-radius: 8px !important;
 }
 
 /* ---- Status bar ---- */
@@ -597,9 +541,9 @@ with gr.Blocks(
     gr.HTML(HEADER_HTML)
     gr.HTML(AGENTS_HTML)
 
-    with gr.Tabs():
+    with gr.Tabs(selected="orchestrator"):
         # ---- Tab 1: Orchestrator (Auto-Route) ----
-        with gr.TabItem("Orchestrator (Auto-Route)"):
+        with gr.TabItem("Orchestrator (Auto-Route)", id="orchestrator"):
             gr.HTML(STATUS_HTML)
             gr.Markdown(
                 "The orchestrator analyzes your query and intelligently routes it to the best agent(s).",
@@ -632,7 +576,7 @@ with gr.Blocks(
             clear_btn.click(lambda: ([], ""), None, [chatbot, msg])
 
         # ---- Tab 2: Direct Agent Access ----
-        with gr.TabItem("Direct Agent Access"):
+        with gr.TabItem("Direct Agent Access", id="direct"):
             gr.Markdown("Bypass the orchestrator — talk directly to a specialist agent.")
 
             agent_selector = gr.Radio(
@@ -664,7 +608,7 @@ with gr.Blocks(
             )
 
         # ---- Tab 3: SAP Knowledge Explorer ----
-        with gr.TabItem("SAP Knowledge Base"):
+        with gr.TabItem("SAP Knowledge Base", id="knowledge"):
             gr.Markdown("Browse the built-in SAP knowledge that powers the RAG agent.")
 
             with gr.Accordion("SAP Tables", open=True):
@@ -700,7 +644,7 @@ with gr.Blocks(
                 )
 
         # ---- Tab 4: Architecture ----
-        with gr.TabItem("Architecture"):
+        with gr.TabItem("Architecture", id="architecture"):
             gr.Markdown("""
 ### System Architecture
 
