@@ -337,7 +337,7 @@ with gr.Blocks(title="SAP Multi-Agent Orchestrator", css=CUSTOM_CSS) as demo:
         # ---- Tab 1: Orchestrator (Auto-Route) ----
         with gr.TabItem("🧠 Orchestrator (Auto-Route)"):
             gr.Markdown("The orchestrator analyzes your query and routes it to the best agent(s) automatically.")
-            chatbot = gr.Chatbot(height=500, type="tuples")
+            chatbot = gr.Chatbot(height=500, type="messages")
             msg = gr.Textbox(
                 placeholder="Ask anything about SAP — code, data, architecture, config...",
                 label="Your Query",
@@ -351,7 +351,8 @@ with gr.Blocks(title="SAP Multi-Agent Orchestrator", css=CUSTOM_CSS) as demo:
 
             def respond(message, history):
                 response = orchestrate(message, history)
-                history.append((message, response))
+                history.append({"role": "user", "content": message})
+                history.append({"role": "assistant", "content": response})
                 return "", history
 
             msg.submit(respond, [msg, chatbot], [msg, chatbot])
